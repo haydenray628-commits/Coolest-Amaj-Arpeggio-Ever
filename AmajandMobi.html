@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coolist A Major Arpeggio Ever!</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 40px;
+      text-align: center;
+      color: #ffcc00;
+      text-shadow: 2px 2px #000;
+    }
+
+    .play-button {
+      font-size: 2em;
+      padding: 20px 40px;
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease;
+      margin-bottom: 30px;
+    }
+
+    .play-button:hover {
+      background-color: #ff3300;
+    }
+
+    .mobi-button {
+      width: 320px;
+      height: 80px;
+      background-color: #6c7a89; /* grey-blue */
+      border-radius: 40px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      border: 3px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      color: white;
+      font-weight: bold;
+      transition: transform 0.2s ease;
+      margin-top: 10px;
+    }
+
+    .mobi-button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Head */
+    .mobi-button::before {
+      content: '';
+      position: absolute;
+      left: -40px;
+      top: 20px;
+      width: 40px;
+      height: 40px;
+      background-color: #6c7a89;
+      border-radius: 50%;
+    }
+
+    /* Tail */
+    .mobi-button::after {
+      content: '';
+      position: absolute;
+      right: -20px;
+      top: 30px;
+      width: 20px;
+      height: 10px;
+      background-color: #6c7a89;
+      border-radius: 10px;
+      transform: rotate(30deg);
+    }
+
+    /* Legs */
+    .mobi-leg {
+      position: absolute;
+      bottom: -10px;
+      width: 20px;
+      height: 20px;
+      background-color: #6c7a89;
+      border-radius: 50%;
+    }
+
+    .leg-front {
+      left: 60px;
+    }
+
+    .leg-back {
+      right: 60px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Coolist A Major Arpeggio Ever!</h1>
+  <button class="play-button" onclick="playArpeggio()">Play</button>
+  <div class="mobi-button" onclick="playBark()">
+    Mobi
+    <div class="mobi-leg leg-front"></div>
+    <div class="mobi-leg leg-back"></div>
+  </div>
+
+  <script>
+    function playArpeggio() {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const freqs = [367, 440, 554.37, 659.25]; // A4, C#5, E5
+      const now = audioCtx.currentTime;
+
+      freqs.forEach((freq, i) => {
+        const oscillator = audioCtx.createOscillator();
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = freq;
+
+        const gainNode = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1200;
+
+        oscillator.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        const startTime = now + i * 0.08;
+        const duration = 0.8;
+
+        gainNode.gain.setValueAtTime(0, startTime);
+        gainNode.gain.linearRampToValueAtTime(1, startTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+      });
+    }
+
+    function playBark() {
+  const bark = new Audio('mobi-bark.mp3');
+  bark.play();
+}
+  </script>
+</body>
+</html>
